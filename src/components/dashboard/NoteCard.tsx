@@ -33,13 +33,13 @@ export function NoteCard({ note, onComment }: NoteCardProps) {
               {note.student?.first_name} {note.student?.last_name}
             </h3>
             <p className="text-sm text-gray-600">
-              {note.teacher?.full_name} • {note.class?.name}
+              {note.teacher?.first_name} {note.teacher?.last_name} • {note.student?.class?.name}
             </p>
           </div>
         </div>
         <div className="flex items-center space-x-2 text-sm text-gray-500">
           <Calendar className="h-4 w-4" />
-          <span>{format(new Date(note.date), 'MMM dd, yyyy')}</span>
+          <span>{format(new Date(note.note_date), 'MMM dd, yyyy')}</span>
         </div>
       </div>
 
@@ -57,16 +57,16 @@ export function NoteCard({ note, onComment }: NoteCardProps) {
                 key={index}
                 className="flex items-center space-x-2 px-3 py-2 bg-gray-100 rounded-lg"
               >
-                {attachment.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                {attachment.file_name.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
                   <ImageIcon className="h-4 w-4 text-gray-600" />
                 ) : (
                   <FileText className="h-4 w-4 text-gray-600" />
                 )}
                 <span className="text-sm text-gray-700">
-                  {attachment.split('/').pop()}
+                  {attachment.file_name}
                 </span>
                 <a
-                  href={attachment}
+                  href={attachment.file_path}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary-600 hover:text-primary-700"
@@ -89,7 +89,7 @@ export function NoteCard({ note, onComment }: NoteCardProps) {
             {note.comments?.slice(0, 2).map((comment) => (
               <div key={comment.id} className="text-sm">
                 <span className="font-medium text-gray-900">
-                  {comment.user?.full_name}:
+                  {comment.user?.first_name} {comment.user?.last_name}:
                 </span>{' '}
                 <span className="text-gray-700">{comment.content}</span>
               </div>

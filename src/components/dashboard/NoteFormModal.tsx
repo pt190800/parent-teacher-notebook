@@ -38,7 +38,7 @@ export function NoteFormModal({ student, onClose, onSuccess }: NoteFormModalProp
           title: formData.title || null,
           content: formData.content,
           status: 'published',
-        })
+        } as any)
         .select()
         .single()
 
@@ -64,12 +64,12 @@ export function NoteFormModal({ student, onClose, onSuccess }: NoteFormModalProp
           await supabase
             .from('note_attachments')
             .insert({
-              note_id: noteData.id,
+              note_id: (noteData as any).id,
               file_name: file.name,
               file_path: filePath,
               file_size: file.size,
               file_type: file.type,
-            })
+            } as any)
         }
       }
 
@@ -81,7 +81,7 @@ export function NoteFormModal({ student, onClose, onSuccess }: NoteFormModalProp
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ noteId: noteData.id }),
+            body: JSON.stringify({ noteId: (noteData as any).id }),
           })
 
           if (!response.ok) {

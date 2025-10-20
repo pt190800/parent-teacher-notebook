@@ -10,7 +10,7 @@ import {
   FileText,
   Loader2
 } from 'lucide-react'
-import { generatePDF } from '@/lib/pdf-generator'
+import { generateNotesPDF } from '@/lib/pdf-generator'
 
 interface ExportModalProps {
   notes: DailyNote[]
@@ -48,7 +48,7 @@ export function ExportModal({ notes, onClose }: ExportModalProps) {
         const end = endDate ? new Date(endDate) : endOfMonth(new Date())
         
         filteredNotes = notes.filter(note => {
-          const noteDate = new Date(note.date)
+          const noteDate = new Date(note.note_date)
           return noteDate >= start && noteDate <= end
         })
       } else if (exportType === 'student' && selectedStudent) {
@@ -61,11 +61,26 @@ export function ExportModal({ notes, onClose }: ExportModalProps) {
       }
 
       // Generate PDF
-      await generatePDF(filteredNotes, {
-        type: exportType,
-        startDate: startDate || format(startOfMonth(new Date()), 'yyyy-MM-dd'),
-        endDate: endDate || format(endOfMonth(new Date()), 'yyyy-MM-dd'),
-        studentName: selectedStudent ? students.find(s => s.id === selectedStudent)?.name : undefined
+      const studentData = students.find(s => s.id === selectedStudent)
+      if (!studentData) {
+        alert('Please select a student.')
+        return
+      }
+
+      // Find the full student object from notes
+      const fullStudent = notes.find(note => note.student?.id === selectedStudent)?.student
+      if (!fullStudent) {
+        alert('Student data not found.')
+        return
+      }
+
+      await generateNotesPDF({
+        student: fullStudent,
+        notes: filteredNotes,
+        dateFrom: startDate || format(startOfMonth(new Date()), 'yyyy-MM-dd'),
+        dateTo: endDate || format(endOfMonth(new Date()), 'yyyy-MM-dd'),
+        includeComments: true,
+        includeAttachments: true
       })
 
       onClose()

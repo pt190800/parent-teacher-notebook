@@ -41,7 +41,7 @@ export function ClassModal({ schools, teachers, onClose, onClassAdded }: ClassMo
     try {
       const { error } = await supabase
         .from('classes')
-        .insert(data)
+        .insert(data as any)
 
       if (error) throw error
 
@@ -134,7 +134,7 @@ export function ClassModal({ schools, teachers, onClose, onClassAdded }: ClassMo
                 <option value="">Select a teacher</option>
                 {teachers.map((teacher) => (
                   <option key={teacher.id} value={teacher.id}>
-                    {teacher.full_name}
+                    {teacher.first_name} {teacher.last_name}
                   </option>
                 ))}
               </select>

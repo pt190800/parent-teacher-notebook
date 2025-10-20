@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { createClient } from '@/lib/supabase/client'
-import { DailyNote, Comment } from '@/types'
+import { DailyNote, NoteComment } from '@/types'
 import { format } from 'date-fns'
 import { 
   X, 
@@ -13,7 +13,7 @@ import {
   Loader2
 } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { sendCommentNotification } from '@/lib/email-service'
+// import { sendCommentNotification } from '@/lib/email-service'
 
 interface CommentModalProps {
   note: DailyNote
@@ -40,11 +40,11 @@ export function CommentModal({ note, onClose, onCommentAdded }: CommentModalProp
     setIsSubmitting(true)
     try {
       const { data: newComment, error } = await supabase
-        .from('comments')
+        .from('note_comments')
         .insert({
           note_id: note.id,
           content: data.content,
-        })
+        } as any)
         .select(`
           *,
           user:users(*)
@@ -57,9 +57,9 @@ export function CommentModal({ note, onClose, onCommentAdded }: CommentModalProp
       reset()
       
       // Send notification for new comment
-      if (newComment) {
-        await sendCommentNotification(newComment, note)
-      }
+      // if (newComment) {
+      //   await sendCommentNotification(newComment, note)
+      // }
       
       onCommentAdded()
     } catch (error) {
@@ -98,7 +98,7 @@ export function CommentModal({ note, onClose, onCommentAdded }: CommentModalProp
                 {note.student?.first_name} {note.student?.last_name}
               </h3>
               <p className="text-sm text-gray-600">
-                {note.teacher?.full_name} • {format(new Date(note.date), 'MMM dd, yyyy')}
+                {note.teacher?.first_name} {note.teacher?.last_name} • {format(new Date(note.note_date), 'MMM dd, yyyy')}
               </p>
             </div>
           </div>
@@ -119,7 +119,7 @@ export function CommentModal({ note, onClose, onCommentAdded }: CommentModalProp
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-1">
                       <span className="font-medium text-gray-900">
-                        {comment.user?.full_name}
+                        {comment.user?.first_name} {comment.user?.last_name}
                       </span>
                       <span className="text-sm text-gray-500">
                         {format(new Date(comment.created_at), 'MMM dd, yyyy \'at\' h:mm a')}
