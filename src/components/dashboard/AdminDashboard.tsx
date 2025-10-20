@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { School, Class, Student, User, ActivityLog } from '@/types'
 import { 
   Users, 
-  School, 
+  School as SchoolIcon, 
   BookOpen, 
   Activity,
   Plus,
@@ -174,7 +174,7 @@ export function AdminDashboard() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
               <div className="p-2 bg-purple-100 rounded-lg">
-                <School className="h-6 w-6 text-purple-600" />
+                <SchoolIcon className="h-6 w-6 text-purple-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Schools</p>
@@ -199,7 +199,7 @@ export function AdminDashboard() {
             <div className="p-6">
               {schools.length === 0 ? (
                 <div className="text-center py-8">
-                  <School className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <SchoolIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                   <p className="text-gray-600">No schools registered yet.</p>
                 </div>
               ) : (

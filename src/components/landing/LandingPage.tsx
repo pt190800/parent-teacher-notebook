@@ -19,11 +19,8 @@ export function LandingPage() {
   }
 
   if (user) {
-    // Redirect to appropriate dashboard based on user role
-    const dashboardPath = user.role === 'admin' ? '/dashboard/admin' : 
-                         user.role === 'teacher' ? '/dashboard/teacher' : 
-                         '/dashboard/parent'
-    window.location.href = dashboardPath
+    // Redirect to dashboard
+    window.location.href = '/dashboard'
     return null
   }
 

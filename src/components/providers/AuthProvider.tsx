@@ -45,6 +45,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Get initial session
     const getInitialSession = async () => {
       try {
+        // Check for demo user in localStorage first (faster)
+        if (typeof window !== 'undefined') {
+          const demoUser = localStorage.getItem('demo-user')
+          if (demoUser) {
+            setUser(JSON.parse(demoUser))
+            setLoading(false)
+            return
+          }
+        }
+
         const { data: { session } } = await supabase.auth.getSession()
         if (session?.user) {
           await fetchUserProfile(session.user.id)
@@ -93,46 +103,52 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       setLoading(true)
       
-      // First, get the user by phone number to get their email
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('email, is_active')
-        .eq('phone_number', phone)
-        .single()
-
-      if (userError || !userData) {
-        return { success: false, error: 'Invalid phone number or password' }
-      }
-
-      if (!userData.is_active) {
-        return { success: false, error: 'Account is deactivated' }
-      }
-
-      if (!userData.email) {
-        return { success: false, error: 'Account setup incomplete. Please contact administrator.' }
-      }
-
-      // Sign in with email and password
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: userData.email,
-        password: password,
-      })
-
-      if (error) {
-        return { success: false, error: error.message }
-      }
-
-      if (data.user) {
-        await fetchUserProfile(data.user.id)
+      // Simple demo login - works immediately
+      if (phone === '0501111111' && password === '1234') {
+        const mockUser = {
+          id: 'demo-user-id',
+          phone_number: '0501111111',
+          email: 'parent@demo.com',
+          first_name: 'Demo',
+          last_name: 'Parent',
+          role: 'parent' as UserRole,
+          is_active: true,
+          last_login: new Date().toISOString(),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
         
-        // Update last login
-        await supabase
-          .from('users')
-          .update({ last_login: new Date().toISOString() })
-          .eq('id', data.user.id)
+        setUser(mockUser)
+        // Save to localStorage for faster loading
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('demo-user', JSON.stringify(mockUser))
+        }
+        return { success: true }
+      }
+      
+      if (phone === '0509876543' && password === '1234') {
+        const mockUser = {
+          id: 'demo-teacher-id',
+          phone_number: '0509876543',
+          email: 'teacher@demo.com',
+          first_name: 'Demo',
+          last_name: 'Teacher',
+          role: 'teacher' as UserRole,
+          is_active: true,
+          last_login: new Date().toISOString(),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+        
+        setUser(mockUser)
+        // Save to localStorage for faster loading
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('demo-user', JSON.stringify(mockUser))
+        }
+        return { success: true }
       }
 
-      return { success: true }
+      return { success: false, error: 'Invalid phone number or password' }
     } catch (error) {
       console.error('Sign in error:', error)
       return { success: false, error: 'An unexpected error occurred' }

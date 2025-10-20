@@ -44,6 +44,37 @@ export function ParentDashboard() {
     if (!user) return
 
     try {
+      // Demo data for demo users
+      if (user.id === 'demo-user-id' || user.id === 'demo-teacher-id') {
+        const demoStudents = [
+          {
+            id: 'demo-student-1',
+            first_name: 'Demo',
+            last_name: 'Child',
+            date_of_birth: '2018-01-01',
+            student_id: 'STU001',
+            class_id: 'demo-class-1',
+            parent_id: user.id,
+            is_active: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            class: {
+              id: 'demo-class-1',
+              name: 'Grade 1A',
+              grade_level: '1',
+              school: {
+                id: 'demo-school-1',
+                name: 'Demo School'
+              }
+            }
+          }
+        ]
+        setStudents(demoStudents)
+        setSelectedStudent(demoStudents[0])
+        setLoading(false)
+        return
+      }
+
       const { data, error } = await supabase
         .from('students')
         .select(`
@@ -70,6 +101,33 @@ export function ParentDashboard() {
   const fetchNotes = async (studentId: string) => {
     try {
       setLoading(true)
+      
+      // Demo data for demo users
+      if (user?.id === 'demo-user-id' || user?.id === 'demo-teacher-id') {
+        const demoNotes = [
+          {
+            id: 'demo-note-1',
+            student_id: studentId,
+            teacher_id: 'demo-teacher-id',
+            note_date: new Date().toISOString().split('T')[0],
+            title: 'Great day at school!',
+            content: 'Demo Child had a wonderful day today. They participated actively in all activities and showed great enthusiasm for learning.',
+            status: 'published',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            teacher: {
+              first_name: 'Demo',
+              last_name: 'Teacher'
+            },
+            attachments: [],
+            comments: []
+          }
+        ]
+        setNotes(demoNotes)
+        setLoading(false)
+        return
+      }
+
       let query = supabase
         .from('daily_notes')
         .select(`

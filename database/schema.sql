@@ -265,3 +265,5 @@ CREATE TRIGGER update_daily_notes_updated_at BEFORE UPDATE ON daily_notes
 
 CREATE TRIGGER update_note_comments_updated_at BEFORE UPDATE ON note_comments
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+INSERT INTO users (phone_number, password_hash, first_name, last_name, role)
+VALUES ('0501234567', '1234', 'Demo', 'Parent', 'parent');
